@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Room_select</title>
+</head>
+<body>
+
+ Страница выбора комнат  для общения
+    <input id="email_user" type="hidden" value={{request.user.email}}><br>
+    <hr>
+    <img id="scr_test" src='/media/avatars/default.jpg' alt="АВАТАРКА)))" width= "80" height= "80">
+    <div id="list_room">Названия комнат</div>
+
+
+    <script>
+         const user_email = document.querySelector('#email_user').value;
+
+         fetch( 'http://127.0.0.1:8000/api/author')
+            .then(response => { return response.json(); })
+            .then(data => { data.forEach(function(entry) {
+            //console.log(entry.name, entry.alias, entry.id );
+            if (entry.name == user_email)
+             {
+              list_room.insertAdjacentHTML('beforeBegin', `<p> ${entry.avatar_name}
+              на этой странице Вы можете выбрать комнату для общения со своими друзьями </p>`);
+              scr_test.src = entry.avatar_url;
+
+             }
+
+            }) })
+            .catch(() => { console.log('error') });
+
+         fetch( 'http://127.0.0.1:8000/api/room')
+            .then(response => { return response.json(); })
+            .then(data => { data.forEach(function(entry) {
+            //console.log(entry.name, entry.alias, entry.id );
+
+              //test.insertAdjacentHTML('afterend', `<p> ${entry.room_name}`);
+              list_room.insertAdjacentHTML('afterend',`<a href= "/chat/${entry.room_name}/" > ${entry.room_name} </a><br>`);
+
+            }) })
+            .catch(() => { console.log('error') });
+
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+
+    <p > Предлагаем Вам -  {{val1}} пригласить друзей для обшения </p>
+    <p > для этого выберите участников и нажмите кнопку Отправить приглашения <br>
+         и выбранным юзерам будут отправлены эл.письма с приглашением подключения <br>
+         к выбранной Вами комнате для общения </p>
+    <form method="POST">
+      {% csrf_token %}
+     <h3 >
+     <select multiple="multiple" name="Участники" id="участники"  size="4" >
+       {% for author in mass_mailing  %}
+            <option value= {{ author.id }} > {{ author }} </option>
+       {% endfor %}
+      </select>
+   <hr>
+   <input type="submit" value="Отправить приглашение"></form>
+
+
+<hr>
+
+
+</body>
+</html>

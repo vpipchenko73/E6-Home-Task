@@ -1,0 +1,158 @@
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <title>Chat Rooms</title>
+</head>
+<body>
+    Редактирование  профиля User
+    <input id="email_user" type="hidden" value={{request.user.email}}><br>
+    <hr>
+    <p>Текущий Аватар Пользователя --> {{request.user.username}}</p>
+
+    <img id="scr_test" src='/media/avatars/default.jpg' alt="АВАТАРКА)))" width= "80" height= "80"><br>
+    <div id="test"></div>
+    <p>Введите ник аватар</p>
+    <input id="avatar_name" type="text" size="20">
+    <p>Выберете картинку аватар в каталоге /media/avatars/</p>
+    <p>
+
+       <input id="url_avatar" type="file" accept="image/jpeg" ><br>
+    </p>
+    <p>Введите название комнаты для общения </p>
+    <input id="name_room" type="text" size="20">
+     <hr>
+    <button type="button" id="bt-1">ВВОД</button>
+    <hr>
+    <button> <a href="../sign/logout/">Выйти из чата</a> </button><br>
+
+
+        <script>
+
+        const CSRFtoken = document.cookie.replace('csrftoken=', '');
+        const btn1 = document.querySelector('#bt-1');
+        //let scr="/media/avatars/default.jpg";
+        const user_email = document.querySelector('#email_user').value;
+        let user_id =0;
+        //avatar_name.value="asd";
+        //alert(user_email)
+        //avatar_scr.insertAdjacentHTML('afterend', `<img src=${scr} alt="АВАТАРКА)))" width= "80" height= "80">`);
+
+        fetch( 'http://127.0.0.1:8000/api/author') // локальный ресурс  работает только
+            .then(response => { return response.json(); })
+            .then(data => { data.forEach(function(entry) {
+            //console.log(entry.name, entry.alias, entry.id );
+            if (entry.name == user_email)
+             {
+              //test.insertAdjacentHTML('afterend', `<p> ${entry.name} </p>`);
+              scr_test.src = entry.avatar_url;
+              avatar_name.value = entry.avatar_name;
+
+              //avatar_scr1.insertAdjacentHTML('afterend', `<img src=${entry.avatar_url} alt="АВАТАРКА)))" width= "80" height= "80">`);
+              user_id = entry.id;
+              //test.insertAdjacentHTML('afterend', `<p> ${entry.id} </p>`);
+              //new_scr = document.createElement(`<img src=${entry.avatar_url} alt="АВАТАРКА)))" width= "80" height= "80">`);
+              //old_scr.replaceWith(new_scr);
+             }
+            //console.log(entry.name, entry.avatar_url, entry.avatar_name );
+            //test.insertAdjacentHTML('afterend', `<p> ${entry.name} </p>`);
+            //test.insertAdjacentHTML('afterend', `<p> ${entry.avatar_url} </p>`);
+            //test.insertAdjacentHTML('afterend', `<p> ${entry.avatar_name} </p>`);
+            }) })
+            .catch(() => { console.log('error') });
+        /*
+        old = document.querySelector('#asd p');
+        const newInput = document.createElement('input');
+        newInput.value='qwery';
+        old.replaceWith(newInput);
+        */
+        //scr_test.src="/media/avatars/multfilm_akula.jpg";
+
+        btn1.addEventListener('click', () => {
+        let url_avatar = document.querySelector('#url_avatar').files[0].name;
+        url_avatars =`/media/avatars/${url_avatar}`;
+        let name_avatar = document.querySelector('#avatar_name').value;
+        let name_room = document.querySelector('#name_room').value;
+        let url_method=`http://127.0.0.1:8000/api/author/`;
+        //alert(url_avatars);
+        //alert ( name_avatar);
+        //alert (user_id);
+        //alert (name_room);
+        //-----------------------------------------------------------------------------------------
+        if (user_id != 0 ) {
+        url_method=`http://127.0.0.1:8000/api/author/${user_id}/`;
+        const options1 = {
+                //method: 'POST',
+                method: 'PATCH',
+                //method: 'PUT',
+                body: JSON.stringify({
+                //name: "pip1@ya.ru",
+                avatar_url: url_avatars,
+                avatar_name: name_avatar
+               }),
+                headers: {
+                 //"Content-type": "application/json; charset=UTF-8",
+                 'Content-Type': 'application/json',
+                 "X-CSRFToken":CSRFtoken
+               }
+              }
+              console.log(options1)
+              // Делаем запрос за данными
+          fetch(url_method, options1)
+           //.then(response => response.json())
+           //.then(json => console.log(json))
+           } else {
+           const options1 = {
+                method: 'POST',
+                //method: 'PATCH',
+                //method: 'PUT',
+                body: JSON.stringify({
+                name: user_email,
+                avatar_url: url_avatars,
+                avatar_name: name_avatar
+               }),
+                headers: {
+                 //"Content-type": "application/json; charset=UTF-8",
+                 'Content-Type': 'application/json',
+                 "X-CSRFToken":CSRFtoken
+               }
+              }
+              console.log(options1)
+              // Делаем запрос за данными
+          fetch(url_method, options1)
+           //.then(response => response.json())
+           //.then(json => console.log(json))
+
+           }
+
+        if (name_room)
+           {
+            const options1 = {
+                method: 'POST',
+                body: JSON.stringify({
+                room_name: name_room,
+                room_author: name_avatar
+               }),
+                headers: {
+                 //"Content-type": "application/json; charset=UTF-8",
+                 'Content-Type': 'application/json',
+                 "X-CSRFToken":CSRFtoken
+               }
+              }
+              console.log(options1)
+              // Делаем запрос за данными
+          fetch("http://127.0.0.1:8000/api/room/", options1)
+           //.then(response => response.json())
+           //.then(json => console.log(json))
+           }
+
+        //window.location.pathname = '/chat/' + name_room + '/';
+        window.location.pathname = '/room_select/';
+        //-----------------------------------------------------------------------------------------
+
+        });
+
+        </script>
+
+</body>
+</html>
+
